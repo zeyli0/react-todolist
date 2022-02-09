@@ -1,38 +1,66 @@
-.App {
-  text-align: center;
+.show {
+  opacity: 1;
+  /* transition: all 1s ease-in; */
+  animation: show-item 2s ease-in forwards;
+}
+.hidden {
+  opacity: 0;
+  /* transition: all 1s ease-in; */
+  animation: hide-item 2s ease-in forwards;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+@keyframes show-item {
+  0% {
+    opacity: 0;
+    color: blue;
+  }
+  50% {
+    opacity: 0.5;
+    color: green;
+  }
+  100% {
+    opacity: 1;
+    color: red;
   }
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+@keyframes hide-item {
+  0% {
+    opacity: 1;
+    color: red;
+  }
+  50% {
+    opacity: 0.5;
+    color: green;
+  }
+  100% {
+    opacity: 0;
+    color: blue;
+  }
 }
 
-.App-link {
-  color: #61dafb;
+.fade {
+  opacity: 0;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.fade-enter-active,
+.fade-appear-active {
+  opacity: 1;
+  transition: opacity 2s ease-in;
+}
+
+.fade-enter-done {
+  opacity: 1;
+}
+
+.fade-exit {
+  opacity: 1;
+}
+
+.fade-exit-active {
+  opacity: 0;
+  transition: opacity 2s ease-in;
+}
+.fade-exit-done {
+  opacity: 0;
 }

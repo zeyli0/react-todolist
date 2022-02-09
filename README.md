@@ -1,70 +1,128 @@
-# Getting Started with Create React App
+### react 中虚拟 dom
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# 1 全部替换的方式：（性能不好）
 
-## Available Scripts
+1.1 state 数据
+1.2 jsx 模板
+1.3 数据 + 模板结合， 生成真实 dom，来显示
+1.4 state 数据发生变化
+1.5 数据 + 模板结合，生成真实的 dom，替换原始的 dom
 
-In the project directory, you can run:
+# 2 先对比部分替换的方式：（性能提升不明显）
 
-### `npm start`
+2.1 state 数据
+2.2 jsx 模板
+2.3 数据 + 模板结合， 生成真实 dom，来显示
+2.4 state 数据发生变化
+2.5 数据 + 模板结合，生成真实的 dom，并不替换原始的 dom
+2.6 新 dom（DocumentFragment）和原始的 dom 做比对，找差异
+2.7 找到 input 框发生变化
+2.8 只用新的 dom 中的 input 元素，替换老的 dom 中的 input 元素
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+# 3 虚拟 dom 的方式：
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+3.1 state 数据
+3.2 jsx 模板
+3.3 数据 + 模板结合， 生成真实 dom，来显示
 
-### `npm test`
+<div id='abc'><span>hello world</span></div>
+3.4 生成虚拟的 dom（虚拟 dom 就是一个 js 对象，用它来描述真实 dom）
+['div', {id: 'abc'}, ['span', {}, 'hello world']]
+3.5 state 数据发生变化
+3.6 数据+模板生成新的虚拟 dom
+3.7 比较原始虚拟 dom 和新的虚拟 dom 的区别。找区别中 span 的区别
+3.8 直接操作 dom，改变 span 中的内容
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+# 4 react 中虚拟 dom 的方式：
 
-### `npm run build`
+jsx -> js 对象 ->真实的 dom
+React.createElement()js 对象=》真实 dom
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+4.1 state 数据
+4.2 jsx 模板
+4.3 数据 + 模板 生成虚拟的 dom（虚拟 dom 就是一个 js 对象，用它来描述真实 dom）
+['div', {id: 'abc'}, ['span', {}, 'hello world']]
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+4.4 数据 + 模板结合， 生成真实 dom，来显示
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+<div id='abc'><span>hello world</span></div>
+React.createElement('div, {}, React.createElement('span',{}, 'hello world'))
+4.5 state 数据发生变化
+4.6 数据+模板生成新的虚拟 dom
+4.7 比较原始虚拟 dom 和新的虚拟 dom 的区别。找区别中 span 的区别
+    diff(difference)算法进行比对
+4.8 直接操作原始 dom，改变 span 中的内容
 
-### `npm run eject`
+# 虚拟 dom 的优点：
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+1. 性能提升了
+2. 它使得跨端应用得以实现，React Native
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+# react 中 setState 设置成异步，为了提升性能，
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+# react 中虚拟 dom 中的 diff 算法（虚拟 dom 树 进行同层比对）
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+比如循环，key 值不可取 index，因为在进行循环比对时下标比对导致标识不稳定
 
-## Learn More
+# react 中 ref(reference) 的引用
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+ref={(input) => {this.input = input}}
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+# react 中的生命周期函数（在某一时刻组件自动调用的函数）
 
-### Code Splitting
+Initialization：
+setup props and state (constructor)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Mounting:
+// 在组件即将挂载到页面的时刻自动执行，一般只在第一次挂载时执行(被废弃)
+componentWillMount
+// render 函数中不可调用 ajax 异步请求数据
+render
+// 在组件即挂载到页面之后自动执行， 一般只在第一次挂载时执行
+// ajax 异步请求数据放在 componentDidMount 最合适
+componentDidMount
 
-### Analyzing the Bundle Size
+Updation：
+props：
+// 当组件要从父组件接收参数
+// 只要父组件的 render 函数被重新执行了，子组件的这个生命周期函数就会被执行
+componentWillReceiveProps
+shouldComponentUpdate
+componentWillUpdate // (被废弃)
+render
+componentDidUpdate
+state:
+shouldComponentUpdate // 提升性能,作性能优化
+componentWillUpdate // (被废弃)
+render
+componentDidUpdate
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Unmounting:
+// 当组件即将被移除时，会被自动执行
+componentWillUnmount
 
-### Making a Progressive Web App
+# These lifecycle methods have often been misunderstood and subtly misused;
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+componentWillMount
+componentWillReceiveProps
+componentWillUpdate
 
-### Advanced Configuration
+# react-transition-group
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+# Redux 数据层框架
 
-### Deployment
+Redux = Reducer + Flux
+工作流程：
+action creator =>(dispatch)=> Store =>(previousState, action)=> reducers
+=>(newState)=> Store =>(state )=> React components
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+store 拆分 actionCreators 和 actionTypes
 
-### `npm run build` fails to minify
+# UI 组件和容器组件
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+UI 组件：展示,页面渲染
+容器组件：处理逻辑
+
+无状态组件：当普通组件中只有一个 render 函数时，可以通过一个箭头函数直接返回
+
+# Redux 中发送异步请求获取数据
