@@ -118,6 +118,9 @@ action creator =>(dispatch)=> Store =>(previousState, action)=> reducers
 
 store 拆分 actionCreators 和 actionTypes
 
+store 唯一
+reducer 必须是纯函数 接收 state，绝不修改 state 的值
+
 ### UI 组件和容器组件
 
 UI 组件：展示,页面渲染
