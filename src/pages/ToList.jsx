@@ -1,13 +1,12 @@
 import { Component, Fragment } from "react";
-import store from "../store/index";
+import store from "../store/index_1";
 import {
+  getInitList,
   getInputValueAction,
   getAddItemAction,
   getDeleteItemAction,
-  initListAction,
 } from "../store/actionCreators";
 import ToListUI from "./ToListUI";
-import axios from "axios";
 
 class ToList extends Component {
   constructor(props) {
@@ -23,16 +22,13 @@ class ToList extends Component {
     this.handleStoreChange = this.handleStoreChange.bind(this);
     store.subscribe(this.handleStoreChange); // 监听store的数据变化
     // ================
-    axios
-      .get("/list.json")
-      .then((res) => {
-        const data = res.data;
-        const action = initListAction(data);
-        store.dispatch(action);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    // redux-thunk方式
+    // const action = getTodoList();
+    // store.dispatch(action);
+    // ================
+    // redux-saga方式
+    const action = getInitList();
+    store.dispatch(action);
   }
 
   render() {

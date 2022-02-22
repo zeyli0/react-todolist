@@ -53,7 +53,7 @@ React.createElement('div, {}, React.createElement('span',{}, 'hello world'))
     diff(difference)算法进行比对
 4.8 直接操作原始 dom，改变 span 中的内容
 
-### 虚拟 dom 的优点：
+### 5 虚拟 dom 的优点：
 
 1. 性能提升了
 2. 它使得跨端应用得以实现，React Native
@@ -129,3 +129,18 @@ UI 组件：展示,页面渲染
 无状态组件：当普通组件中只有一个 render 函数时，可以通过一个箭头函数直接返回
 
 ### Redux 中发送异步请求获取数据
+
+redux 中 action 只能是一个对象
+redux-thunk 中间件：
+action 可以是一个函数，将异步放到 action 操作
+
+redux-saga 中间件：
+const sagaMiddleware = createSagaMiddleware();
+sagaMiddleware.run(mySaga);
+sagas.js 文件里是 generator 函数
+
+react-redux 第三方模块：
+React Redux includes a <Provider /> component, which makes the Redux store available to the rest of your app
+
+Hooks：
+useSelector reads a value from the store state and subscribes to updates, while useDispatch returns the store's dispatch method to let you dispatch actions.
